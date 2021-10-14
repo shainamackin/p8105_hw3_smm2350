@@ -1,0 +1,23 @@
+---
+title: "p8105_hw3_smm2350"
+author: "Shaina Mackin" 
+date: "2021-10-20"
+output: github_document
+---
+
+# Homework 3
+
+```{r libraries, echo = FALSE, message = FALSE}
+library(tidyverse)
+library(p8105.datasets)
+data("instacart")
+```
+
+## Problem 1
+
+### 
+
+```{r}
+
+```
+
