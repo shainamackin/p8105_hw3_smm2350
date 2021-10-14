@@ -15,8 +15,6 @@ data("instacart")
 
 ## Problem 1
 
-### 
-
 ```{r}
 
 ```
