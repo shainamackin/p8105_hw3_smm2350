@@ -37,6 +37,15 @@ I will write a short description of the dataset, noting the size and structure o
 The instacart dataset contains online grocery shopping data from 2017, with `r nrow(instacart)` observations, or products from orders, and `r ncol(instacart)` variables, for a total of `r (nrow(instacart)*ncol(instacart))` data points. Key variables include `order_id`, `product_id`, `user_id`, whether items were `reordered`, `order_hour_of_day` and `days_since_prior_order` (ranging from `r min(pull(instacart, days_since_prior_order))` to `r max(pull(instacart, days_since_prior_order))` ), as well as `product_name` and associated `aisle` and `department`.
 
 ```{r}
+instacart %>%
+  group_by(aisle_id, aisle) %>%
+  summarize(n_obs = n()) %>%
+  arrange(desc(n_obs))
+```
+
+There are 134 aisles. The aisles with the most ordered from items are `fresh vegetables` and `fresh fruits`, followed by `packaged vegetables fruits`. 
+
+```{r}
 
 ```
 
