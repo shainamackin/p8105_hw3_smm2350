@@ -7,13 +7,34 @@ output: github_document
 
 # Homework 3
 
+To begin, I will load the tidyverse and instacart data, as well as set knitr options.
+
 ```{r libraries, echo = FALSE, message = FALSE}
 library(tidyverse)
 library(p8105.datasets)
 data("instacart")
+
+knitr::opts_chunk$set(
+  fig.width = 6,
+  fig.asp = .6,
+  out.width = "90%"
+)
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+scale_colour_discrete = scale_colour_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
 ```
 
 ## Problem 1
+
+### data exploration
+
+I will write a short description of the dataset, noting the size and structure of the data, describing key variables, and giving illustrative examples of observations:
+
+The instacart dataset contains online grocery shopping data from 2017, with `r nrow(instacart)` observations, or products from orders, and `r ncol(instacart)` variables, for a total of `r (nrow(instacart)*ncol(instacart))` data points. Key variables include `order_id`, `product_id`, `user_id`, whether items were `reordered`, `order_hour_of_day` and `days_since_prior_order` (ranging from `r min(pull(instacart, days_since_prior_order))` to `r max(pull(instacart, days_since_prior_order))` ), as well as `product_name` and associated `aisle` and `department`.
 
 ```{r}
 
