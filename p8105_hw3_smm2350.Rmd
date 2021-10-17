@@ -75,7 +75,8 @@ instacart %>%
  count(aisle, product_name) %>%
   arrange(desc(n)) %>%
   group_by(aisle) %>%
-  slice(1:3)
+  slice(1:3) %>%
+  arrange(desc(n))
 ```
 
 
