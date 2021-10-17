@@ -36,6 +36,11 @@ I will write a short description of the dataset, noting the size and structure o
 
 The instacart dataset contains online grocery shopping data from 2017, with `r nrow(instacart)` observations, or products from orders, and `r ncol(instacart)` variables, for a total of `r (nrow(instacart)*ncol(instacart))` data points. Key variables include `order_id`, `product_id`, `user_id`, whether items were `reordered`, `order_hour_of_day` and `days_since_prior_order` (ranging from `r min(pull(instacart, days_since_prior_order))` to `r max(pull(instacart, days_since_prior_order))` ), as well as `product_name` and associated `aisle` and `department`.
 
+```{r exploration}
+
+```
+
+
 ```{r aisles_count}
 instacart %>%
   group_by(aisle_id, aisle) %>%
@@ -45,6 +50,8 @@ instacart %>%
 
 There are 134 aisles. The aisles with the most ordered from items are `fresh vegetables` and `fresh fruits`, followed by `packaged vegetables fruits`. 
 
+To illustrate this, I will make a plot that shows the number of items ordered in each aisle, limiting this to aisles with more than 10000 items ordered.
+
 ```{r aisles_plot}
 instacart %>%
   count(aisle) %>%
@@ -53,10 +60,22 @@ instacart %>%
   geom_col() +
   coord_flip() +
   labs(
-    title = "Plot of items ordered per aisle",
+    title = "Number of items ordered per aisle",
     x = "Aisle name",
-    y = "Number of items ordered",
+    y = "Number of items",
     caption = "note: limited to aisles with more than 10,000 items ordered"
   )
 ```
+
+I will make a table showing the three most popular items in the `baking ingredients`, `dog food care`, an d`packaged vegetables fruits` aisles. 
+
+```{r aisles_table}
+instacart %>%
+  count(aisle, product_name) %>% 
+  pivot_wider(
+    names_from = product_name,
+    values_from = n
+  )
+```
+
 
