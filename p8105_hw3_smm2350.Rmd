@@ -40,7 +40,7 @@ The instacart dataset contains online grocery shopping data from 2017, with `r n
 instacart %>%
   group_by(aisle_id, aisle) %>%
   summarize(n_obs = n()) %>%
-  arrange(desc(n_obs))
+  arrange(desc(n_obs)) 
 ```
 
 There are 134 aisles. The aisles with the most ordered from items are `fresh vegetables` and `fresh fruits`, followed by `packaged vegetables fruits`. 
@@ -48,6 +48,7 @@ There are 134 aisles. The aisles with the most ordered from items are `fresh veg
 ```{r aisles_plot}
 instacart %>%
   count(aisle) %>%
+  filter(n > 10000) %>%
   ggplot(aes(forcats::fct_reorder(aisle, (n)), n)) +
   geom_col() +
   coord_flip() +
