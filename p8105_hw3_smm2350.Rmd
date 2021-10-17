@@ -7,11 +7,12 @@ output: github_document
 
 # Homework 3
 
-To begin, I will load the tidyverse and instacart data, as well as set knitr options.
+To begin, I will load the necessary packages and instacart data, as well as set knitr options.
 
 ```{r libraries, echo = FALSE, message = FALSE}
 library(tidyverse)
 library(p8105.datasets)
+library(lubridate)
 data("instacart")
 
 knitr::opts_chunk$set(
@@ -36,10 +37,23 @@ I will write a short description of the dataset, noting the size and structure o
 
 The instacart dataset contains online grocery shopping data from 2017, with `r nrow(instacart)` observations, or products from orders, and `r ncol(instacart)` variables, for a total of `r (nrow(instacart)*ncol(instacart))` data points. Key variables include `order_id`, `product_id`, `user_id`, whether items were `reordered`, `order_hour_of_day` and `days_since_prior_order` (ranging from `r min(pull(instacart, days_since_prior_order))` to `r max(pull(instacart, days_since_prior_order))` ), as well as `product_name` and associated `aisle` and `department`.
 
-```{r exploration}
+Initial analysis shows `produce` to be the most frequently ordered from department, as visualized below: 
 
+```{r exploration}
+instacart %>%
+  count(department) %>%
+  arrange(desc(n)) %>%
+  ggplot(aes(forcats::fct_reorder(department, (n)), n)) +
+  geom_col() +
+  coord_flip() +
+  labs(
+    title = "Departments in decreasing order of popularity",
+    x = "Department name",
+    y = "Number of items ordered",
+  )
 ```
 
+#### Let's explore how many aisles are there, and which aisles are the most ordered from.
 
 ```{r aisles_count}
 instacart %>%
@@ -50,7 +64,7 @@ instacart %>%
 
 There are 134 aisles. The aisles with the most ordered from items are `fresh vegetables` and `fresh fruits`, followed by `packaged vegetables fruits`. 
 
-To illustrate this, I will make a plot that shows the number of items ordered in each aisle, limiting this to aisles with more than 10000 items ordered.
+#### To illustrate this, I will make a plot that shows the number of items ordered in each aisle, limiting this to aisles with more than 10000 items ordered.
 
 ```{r aisles_plot}
 instacart %>%
@@ -67,7 +81,9 @@ instacart %>%
   )
 ```
 
-I will make a table showing the three most popular items in the `baking ingredients`, `dog food care`, an d`packaged vegetables fruits` aisles. 
+This again shows that the aisles most ordered from are `fresh vegetables` and `fresh fruits`, followed by `packaged vegetables fruits`.
+
+#### I will make a table showing the three most popular items in the `baking ingredients`, `dog food care`, and `packaged vegetables fruits` aisles. 
 
 ```{r aisles_table}
 instacart %>%
@@ -76,20 +92,37 @@ instacart %>%
   arrange(desc(n)) %>%
   group_by(aisle) %>%
   slice(1:3) %>%
-  arrange(desc(n))
+  arrange(desc(n)) %>%
+  group_by(aisle) %>%
+  knitr::kable(caption = "Top  3  Items Per Aisle")
 ```
 
-I will make a 2x7 table showing the mean hour of the day at which Pink Lady Apples and Coffee Ice Cream are ordered on each day of the week. 
+We see that `organic baby spinach`, `organic raspberries`, and `organic blueberries` are the top three ordered items from the `packaged vegetables fruits` aisle; `light brown sugar`, `pure baking soda`, and `cane sugar` are the top three ordered items from the `baking ingredients` aisle; and `snack sticks chicken & rice recipe dog treats`, `organix chicken & brown rice recipe`, and `small dog biscuits` are the top three ordered items from the `dog food care` aisle, respectively.
+
+#### I will make a 2x7 table showing the mean hour of the day at which Pink Lady Apples and Coffee Ice Cream are ordered on each day of the week. 
 
 ```{r apples_ice_table}
 instacart %>%
+  mutate(t_day_number = order_dow +1) %>%
+  mutate(day_of_week = wday(t_day_number, label = TRUE)) %>%
   filter(product_name == "Pink Lady Apples" | product_name == "Coffee Ice Cream") %>%
-  group_by(product_name, order_dow) %>%
-  summarize(mean_hour = mean(order_hour_of_day)) %>%
+  group_by(product_name, day_of_week) %>%
+  summarize(mean_hour = round(mean(order_hour_of_day), digits = 2)) %>%
   pivot_wider(
-    names_from = order_dow,
+    names_from = day_of_week,
     values_from = mean_hour
-  )
+  ) %>%
+  knitr::kable(caption = "Mean Hour of Day Ordered")
+```
+
+`Coffee Ice Cream` is ordered, on average, later in the day than `Pink Lady Apples`. 
+
+## Problem 2
+
+### BRFSS data
+
+```{r brfss}
+data("brfss_smart2010")
   
 ```
 
