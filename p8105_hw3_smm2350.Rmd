@@ -71,11 +71,11 @@ I will make a table showing the three most popular items in the `baking ingredie
 
 ```{r aisles_table}
 instacart %>%
-  count(aisle, product_name) %>% 
-  pivot_wider(
-    names_from = product_name,
-    values_from = n
-  )
+  filter(aisle == "baking ingredients" | aisle == "dog food care" | aisle == "packaged vegetables fruits") %>%
+ count(aisle, product_name) %>%
+  arrange(desc(n)) %>%
+  group_by(aisle) %>%
+  slice(1:3)
 ```
 
 
