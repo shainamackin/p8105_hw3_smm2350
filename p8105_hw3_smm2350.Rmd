@@ -13,6 +13,8 @@ To begin, I will load the necessary packages and instacart data, as well as set 
 library(tidyverse)
 library(p8105.datasets)
 library(lubridate)
+library(janitor)
+library(readxl)
 data("instacart")
 
 knitr::opts_chunk$set(
@@ -31,7 +33,7 @@ scale_fill_discrete = scale_fill_viridis_d
 
 ## Problem 1
 
-### data exploration
+### Instacart data
 
 I will write a short description of the dataset, noting the size and structure of the data, describing key variables, and giving illustrative examples of observations:
 
@@ -121,8 +123,25 @@ instacart %>%
 
 ### BRFSS data
 
-```{r brfss}
+I will clean the data, formatting to use appropriate variable names, focusing on the `Overall Health` topic, and only including factored responses ordered from `Excellent` to `Poor`.
+
+```{r brfss_tidy}
 data("brfss_smart2010")
-  
+
+brfss_tidy = brfss_smart2010 %>%
+  janitor::clean_names() %>%
+   filter(
+    topic %in% "Overall Health",
+    response %in% "Poor" | response %in% "Fair" | response %in% "Good" | response %in% "Very Good" | response %in% "Excellent") %>% 
+ mutate(response_ordered = factor(response, ordered = TRUE, levels = c("Poor", "Fair", "Good", "Very Good", "Excellent")))
+```
+
+## Problem 3
+
+### Accelerometer data
+
+```{r accel_import}
+accel_df = read_csv("accel_data.csv") %>%
+  janitor::clean_names()
 ```
 
