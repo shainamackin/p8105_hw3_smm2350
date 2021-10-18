@@ -166,7 +166,8 @@ In 2010, `CA`, `CO`, `FL`, `MD`, `MA`, `NE`, `NJ`, `NY`, `NC`, `OH`, `PA`, `SC`,
 ```{r}
 df_excellent = brfss_tidy %>%
   filter(response %in% "Excellent") %>%
-  select(year, locationabbr)
+  mutate(avg_value = mean(data_value))%>%
+  select(year, locationabbr, data_value) 
 ```
 
 COMMENT
