@@ -155,7 +155,7 @@ brfss_tidy %>%
   group_by(locationabbr) %>%
   filter(n() >= 7) %>% 
   select(locationabbr) %>%
-  distinct()
+  distinct() 
 ```
 
 In 2002, `CT`, `FL`, `MA`, `NJ`, `NC`, and `PA` were observed at 7 or more locations. 
@@ -163,14 +163,29 @@ In 2010, `CA`, `CO`, `FL`, `MD`, `MA`, `NE`, `NJ`, `NY`, `NC`, `OH`, `PA`, `SC`,
 
 #### I will construct a dataset that is limited to Excellent responses, and contains, year, state, and a variable that averages the data_value across locations within a state. I will also make a “spaghetti” plot of this average value over time within a state.
 
-```{r}
+```{r brfss_excellent}
 df_excellent = brfss_tidy %>%
   filter(response %in% "Excellent") %>%
-  mutate(avg_value = mean(data_value))%>%
-  select(year, locationabbr, data_value) 
+  select(year, locationabbr, data_value) %>%
+  unique() %>%
+  na.omit() %>%
+  group_by(locationabbr, year) %>%
+  mutate(
+    avg_data_value = mean(data_value)) %>%
+  select(year, locationabbr, avg_data_value) %>%
+  distinct()
+
+df_excellent %>%
+  ggplot(aes(x = year, y = avg_data_value)) +
+  geom_line(aes(group = locationabbr, color = locationabbr)) +
+  labs(
+    title = "Average data value among states over time",
+    x = "Year",
+    y = "Average Data Value") +
+  guides(col=guide_legend("State"))
 ```
 
-COMMENT
+The state with the lowest average data value over the years, across locations, is `WY`.
 
 #### I will make a two-panel plot showing, for the years 2006, and 2010, distribution of data_value for responses (“Poor” to “Excellent”) among locations in NY State.
 
