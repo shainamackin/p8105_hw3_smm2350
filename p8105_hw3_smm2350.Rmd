@@ -7,7 +7,7 @@ output: github_document
 
 # Homework 3
 
-To begin, I will load the necessary packages and instacart data, as well as set knitr options.
+To begin, I will load the necessary packages and instacart data and set theme options.
 
 ```{r libraries, echo = FALSE, message = FALSE}
 library(tidyverse)
@@ -17,11 +17,6 @@ library(janitor)
 library(readxl)
 data("instacart")
 
-knitr::opts_chunk$set(
-  fig.width = 6,
-  fig.asp = .6,
-  out.width = "90%"
-)
 theme_set(theme_minimal() + theme(legend.position = "bottom"))
 options(
   ggplot2.continuous.colour = "viridis",
@@ -182,7 +177,8 @@ df_excellent %>%
     title = "Average data value among states over time",
     x = "Year",
     y = "Average Data Value") +
-  guides(col=guide_legend("State"))
+  guides(col=guide_legend("State")) +
+  theme(legend.position = "right")
 ```
 
 The state with the lowest average data value over the years, across locations, is `WY`.
@@ -195,14 +191,16 @@ brfss_tidy %>%
   filter(
     year == 2006 | year == 2010,
     locationabbr == "NY") %>%
-  ggplot(aes(x = response_ordered, y = data_value)) +
-  geom_line(aes(group = locationdesc, color = locationdesc)) + 
+  ggplot(aes(x = data_value, fill = response_ordered)) +
+  geom_density(aes(fill = response_ordered), alpha = .5) + 
   labs(
     title = "Data value across responses among NY locations",
-    x = "Response",
-    y = "Data Value"
+    x = "Data Value",
+    fill = "Response"
   ) +
-  geom_point() +
+  theme(
+    axis.title.y = element_blank(),
+    axis.text.y = element_blank()) +
   facet_grid(. ~ year) +
    guides(col=guide_legend("Location"))
 
@@ -214,8 +212,31 @@ For both `2006` and `2010`, the highest `data_value` among all NY locations was 
 
 ### Accelerometer data
 
+First, I will load and tidy the accelerometer data.
+
 ```{r accel_import}
 accel_df = read_csv("accel_data.csv") %>%
   janitor::clean_names()
 ```
 
+DESCRIBE!
+
+#### Daily activity
+
+I will aggregate across minutes to create a total activity variable for each day, and create a table showing these totals. 
+
+```{r accel_daily_activity}
+
+```
+
+TRENDS? 
+
+#### 24-hour plot
+
+I will make a single-panel plot that shows the 24-hour activity time courses for each day and use color to indicate day of the week. 
+
+```{r accel_24_plot}
+
+```
+
+DESCRIBE!
