@@ -127,8 +127,8 @@ brfss_tidy = brfss_smart2010 %>%
   janitor::clean_names() %>%
    filter(
     topic %in% "Overall Health",
-    response %in% "Poor" | response %in% "Fair" | response %in% "Good" | response %in% "Very Good" | response %in% "Excellent") %>% 
- mutate(response_ordered = factor(response, ordered = TRUE, levels = c("Poor", "Fair", "Good", "Very Good", "Excellent")))
+    response %in% "Poor" | response %in% "Fair" | response %in% "Good" | response %in% "Very good" | response %in% "Excellent") %>% 
+ mutate(response_ordered = factor(response, ordered = TRUE, levels = c("Poor", "Fair", "Good", "Very good", "Excellent")))
 ```
 
 #### Let's determine which states were observed at 7 or more locations in 2002 and 2010.
@@ -216,7 +216,16 @@ First, I will load and tidy the accelerometer data.
 
 ```{r accel_import}
 accel_df = read_csv("accel_data.csv") %>%
-  janitor::clean_names()
+  janitor::clean_names() %>%
+  mutate(
+    day = factor(day, ordered = TRUE,
+                 levels = c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")),
+    week = factor(week, ordered = TRUE,
+                  levels = c(1:5)),
+    day_class = ifelse(day %in% c("Saturday", "Sunday"), "weekend", "weekday") %>%
+    factor(levels = c("weekday", "weekend"))) 
+
+view(accel_df)
 ```
 
 DESCRIBE!
