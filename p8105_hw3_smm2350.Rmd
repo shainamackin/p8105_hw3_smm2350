@@ -222,13 +222,16 @@ accel_df = read_csv("accel_data.csv") %>%
                  levels = c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")),
     week = factor(week, ordered = TRUE,
                   levels = c(1:5)),
-    day_class = ifelse(day %in% c("Saturday", "Sunday"), "weekend", "weekday") %>%
-    factor(levels = c("weekday", "weekend"))) 
-
-view(accel_df)
+    weekend_or_weekday = ifelse(day %in% c("Saturday", "Sunday"), "weekend", "weekday") %>%
+    factor(levels = c("weekday", "weekend"))) %>%
+    pivot_longer(
+    activity_1:activity_1440,
+    names_to = "minute",
+    names_prefix = "activity_",
+    values_to = "count")
 ```
 
-DESCRIBE!
+The tidied `accel_df` contains `r nrow(accel_df)` rows (or observations), one for every `minute` of every `day` from the `r max(pull(accel_df, week))` `week` period of accelerometer data collection. The dataset's `r ncol(accel_df)` variables include the following: `r colnames(accel_df)`.
 
 #### Daily activity
 
