@@ -239,6 +239,15 @@ I will aggregate across minutes to create a total activity variable for each day
 
 ```{r accel_daily_activity}
 
+daily_df = accel_df %>%
+  group_by(day_id) %>%
+  summarize(activity = sum(count)) %>%
+  pivot_wider(
+    names_from = day_id,
+    values_from = activity
+  )
+
+knitr::kable(daily_df, caption = "Total Daily Activity")
 ```
 
 TRENDS? 
