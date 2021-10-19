@@ -7,7 +7,7 @@ output: github_document
 
 # Homework 3
 
-To begin, I will load the necessary packages and instacart data and set theme options.
+To begin, I will load packages and instacart data, and set theme options.
 
 ```{r libraries, echo = FALSE, message = FALSE}
 library(tidyverse)
@@ -30,11 +30,22 @@ scale_fill_discrete = scale_fill_viridis_d
 
 ### Instacart data
 
-I will write a short description of the dataset, noting the size and structure of the data, describing key variables, and giving illustrative examples of observations:
+I will write a short description of the dataset,
+noting the size and structure of the data, 
+describing key variables, 
+and giving illustrative examples of observations:
 
-The instacart dataset contains online grocery shopping data from 2017, with `r nrow(instacart)` observations, or products from orders, and `r ncol(instacart)` variables, for a total of `r (nrow(instacart)*ncol(instacart))` data points. Key variables include `order_id`, `product_id`, `user_id`, whether items were `reordered`, `order_hour_of_day` and `days_since_prior_order` (ranging from `r min(pull(instacart, days_since_prior_order))` to `r max(pull(instacart, days_since_prior_order))` ), as well as `product_name` and associated `aisle` and `department`.
+The instacart dataset contains online grocery shopping data from 2017, with 
+`r nrow(instacart)` observations, or products from orders, and `r ncol(instacart)` 
+variables, for a total of `r (nrow(instacart)*ncol(instacart))` data points. 
+Key variables include `order_id`, `product_id`, `user_id`, whether items were 
+`reordered`, `order_hour_of_day` and `days_since_prior_order` (ranging from 
+`r min(pull(instacart, days_since_prior_order))` to `r max(pull(instacart, 
+days_since_prior_order))` ), as well as `product_name` and associated `aisle` 
+and `department`.
 
-Initial analysis shows `produce` to be the most frequently ordered from department, as visualized below: 
+Initial analysis shows `produce` to be the most frequently ordered-from department, 
+as visualized below: 
 
 ```{r exploration}
 instacart %>%
@@ -50,7 +61,7 @@ instacart %>%
   )
 ```
 
-#### Let's explore how many aisles are there, and which aisles are the most ordered from.
+#### Let's explore how many aisles are there, and which are most ordered from.
 
 ```{r aisles_count}
 instacart %>%
@@ -59,9 +70,11 @@ instacart %>%
   arrange(desc(n_obs)) 
 ```
 
-There are 134 aisles. The aisles with the most ordered from items are `fresh vegetables` and `fresh fruits`, followed by `packaged vegetables fruits`. 
+There are 134 aisles. The aisles with the most ordered-from items are 
+`fresh vegetables` and `fresh fruits`, followed by `packaged vegetables fruits`. 
 
-#### To illustrate this, I will make a plot that shows the number of items ordered in each aisle, limiting this to aisles with more than 10000 items ordered.
+#### To illustrate this, I will make a plot that shows the number of items 
+#### ordered in each aisle, limiting to aisles with more than 10000 items ordered.
 
 ```{r aisles_plot}
 instacart %>%
@@ -78,13 +91,17 @@ instacart %>%
   )
 ```
 
-This again shows that the aisles most ordered from are `fresh vegetables` and `fresh fruits`, followed by `packaged vegetables fruits`.
+This again shows that the aisles most ordered from are `fresh vegetables` 
+and `fresh fruits`, followed by `packaged vegetables fruits`.
 
-#### I will make a table showing the three most popular items in the `baking ingredients`, `dog food care`, and `packaged vegetables fruits` aisles. 
+#### I will make a table showing the three most popular items in the 
+`baking ingredients`, `dog food care`, and `packaged vegetables fruits` aisles. 
 
 ```{r aisles_table}
 instacart %>%
-  filter(aisle == "baking ingredients" | aisle == "dog food care" | aisle == "packaged vegetables fruits") %>%
+  filter(aisle == "baking ingredients" | 
+           aisle == "dog food care" | 
+           aisle == "packaged vegetables fruits") %>%
  count(aisle, product_name) %>%
   arrange(desc(n)) %>%
   group_by(aisle) %>%
@@ -94,9 +111,16 @@ instacart %>%
   knitr::kable(caption = "Top  3  Items Per Aisle")
 ```
 
-We see that `organic baby spinach`, `organic raspberries`, and `organic blueberries` are the top three ordered items from the `packaged vegetables fruits` aisle; `light brown sugar`, `pure baking soda`, and `cane sugar` are the top three ordered items from the `baking ingredients` aisle; and `snack sticks chicken & rice recipe dog treats`, `organix chicken & brown rice recipe`, and `small dog biscuits` are the top three ordered items from the `dog food care` aisle, respectively.
+We see that `organic baby spinach`, `organic raspberries`, and `organic blueberries` 
+are the top three ordered items from the `packaged vegetables fruits` aisle; 
+`light brown sugar`, `pure baking soda`, and `cane sugar` are the top three ordered 
+items from the `baking ingredients` aisle; 
+and `snack sticks chicken & rice recipe dog treats`, 
+`organix chicken & brown rice recipe`, and `small dog biscuits` are the top three
+ordered items from the `dog food care` aisle, respectively.
 
-#### I will make a 2x7 table showing the mean hour of the day at which Pink Lady Apples and Coffee Ice Cream are ordered on each day of the week. 
+#### I will make a 2x7 table showing the mean hour of the day at which 
+#### Pink Lady Apples and Coffee Ice Cream are ordered on each day of the week. 
 
 ```{r apples_ice_table}
 instacart %>%
@@ -118,7 +142,9 @@ instacart %>%
 
 ### BRFSS data
 
-I will clean the data, formatting to use appropriate variable names, focusing on the `Overall Health` topic, and only including factored responses ordered from `Excellent` to `Poor`.
+I will clean the data, formatting to use appropriate variable names, 
+focusing on the `Overall Health` topic, and only including factored responses 
+ordered from `Excellent` to `Poor`.
 
 ```{r brfss_tidy}
 data("brfss_smart2010")
@@ -127,11 +153,13 @@ brfss_tidy = brfss_smart2010 %>%
   janitor::clean_names() %>%
    filter(
     topic %in% "Overall Health",
-    response %in% "Poor" | response %in% "Fair" | response %in% "Good" | response %in% "Very good" | response %in% "Excellent") %>% 
- mutate(response_ordered = factor(response, ordered = TRUE, levels = c("Poor", "Fair", "Good", "Very good", "Excellent")))
+    response %in% "Poor" | response %in% "Fair" | response %in% "Good" | 
+      response %in% "Very good" | response %in% "Excellent") %>% 
+ mutate(response_ordered = factor(response, ordered = TRUE, 
+        levels = c("Poor", "Fair", "Good", "Very good", "Excellent")))
 ```
 
-#### Let's determine which states were observed at 7 or more locations in 2002 and 2010.
+#### Let's determine which states were observed at 7+ locations in 2002 and 2010.
 
 ```{r brfss_locations}
 brfss_tidy %>%
@@ -154,9 +182,13 @@ brfss_tidy %>%
 ```
 
 In 2002, `CT`, `FL`, `MA`, `NJ`, `NC`, and `PA` were observed at 7 or more locations. 
-In 2010, `CA`, `CO`, `FL`, `MD`, `MA`, `NE`, `NJ`, `NY`, `NC`, `OH`, `PA`, `SC`, `TX`, and `WA` were observed at 7 or more locations.  
+In 2010, `CA`, `CO`, `FL`, `MD`, `MA`, `NE`, `NJ`, `NY`, `NC`, `OH`, `PA`, 
+`SC`, `TX`, and `WA` were observed at 7 or more locations.  
 
-#### I will construct a dataset that is limited to Excellent responses, and contains, year, state, and a variable that averages the data_value across locations within a state. I will also make a “spaghetti” plot of this average value over time within a state.
+#### I will construct a dataset that is limited to Excellent responses, 
+#### and contains, year, state, and a variable that averages the data_value across 
+#### locations within a state. I will also make a “spaghetti” plot of this 
+#### average value over time within a state.
 
 ```{r brfss_excellent}
 df_excellent = brfss_tidy %>%
@@ -181,9 +213,11 @@ df_excellent %>%
   theme(legend.position = "right")
 ```
 
-The state with the lowest average data value over the years, across locations, is `WY`.
+The state with the lowest average data value over the years is `WY`.
 
-#### I will make a two-panel plot showing, for the years 2006, and 2010, distribution of data_value for responses (“Poor” to “Excellent”) among locations in NY State.
+#### I will make a two-panel plot showing, for the years 2006, and 2010, 
+#### distribution of data_value for responses (“Poor” to “Excellent”) 
+#### among locations in NY State.
 
 ```{r brfss_excellent_plot}
 brfss_tidy %>%
@@ -203,10 +237,10 @@ brfss_tidy %>%
     axis.text.y = element_blank()) +
   facet_grid(. ~ year) +
    guides(col=guide_legend("Location"))
-
 ```
 
-For both `2006` and `2010`, the highest `data_value` among all NY locations was associated with a `Good` `response`. 
+For both `2006` and `2010`, the highest `data_value` among all NY locations 
+was associated with a `Good` `response`. 
 
 ## Problem 3
 
@@ -219,10 +253,12 @@ accel_df = read_csv("accel_data.csv") %>%
   janitor::clean_names() %>%
   mutate(
     day = factor(day, ordered = TRUE,
-                 levels = c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")),
+                 levels = c("Monday", "Tuesday", "Wednesday", "Thursday", 
+                            "Friday", "Saturday", "Sunday")),
     week = factor(week, ordered = TRUE,
                   levels = c(1:5)),
-    weekend_or_weekday = ifelse(day %in% c("Saturday", "Sunday"), "weekend", "weekday") %>%
+    weekend_or_weekday = ifelse(day %in% c("Saturday", "Sunday"), 
+                                "weekend", "weekday") %>%
     factor(levels = c("weekday", "weekend"))) %>%
     pivot_longer(
     activity_1:activity_1440,
@@ -231,21 +267,25 @@ accel_df = read_csv("accel_data.csv") %>%
     values_to = "count")
 ```
 
-The tidied `accel_df` contains `r nrow(accel_df)` rows (or observations), one for every `minute` of every `day` from the `r max(pull(accel_df, week))` `week` period of accelerometer data collection. The dataset's `r ncol(accel_df)` variables include the following: `r colnames(accel_df)`.
+The tidied `accel_df` contains `r nrow(accel_df)` rows (or observations), 
+one for every `minute` of every `day` from the `r max(pull(accel_df, week))` `week` 
+period of accelerometer data collection. 
+The dataset's `r ncol(accel_df)` variables include the following: 
+`r colnames(accel_df)`.
 
 #### Daily activity
 
-I will aggregate across minutes to create a total activity variable for each day, and create a table showing these totals. 
+I will aggregate across minutes to create a total activity variable for each day, 
+and create a table showing these totals. 
 
 ```{r accel_daily_activity}
-
 daily_df = accel_df %>%
   group_by(day_id) %>%
   summarize(activity = sum(count)) %>%
+  mutate(day_id = paste("day", day_id)) %>%
   pivot_wider(
     names_from = day_id,
-    values_from = activity
-  )
+    values_from = activity)
 
 knitr::kable(daily_df, caption = "Total Daily Activity")
 ```
@@ -254,10 +294,21 @@ TRENDS?
 
 #### 24-hour plot
 
-I will make a single-panel plot that shows the 24-hour activity time courses for each day and use color to indicate day of the week. 
+I will make a single-panel plot that shows the 24-hour activity time courses for 
+each day and use color to indicate day of the week. 
 
-```{r accel_24_plot}
-
+```{r accel_24_plot, message=FALSE}
+panel_df = accel_df %>%
+  mutate(week = paste("week", week)) %>%
+  ggplot(aes(x = minute, y = count, color = day)) +
+  geom_point(size = .5) +
+  geom_line() +
+  labs(
+    title = "24-hour accelerometer activity time courses by day",
+    x = "minute",
+    y = "activity count"
+  ) +
+   theme(legend.position = "right")
 ```
 
 DESCRIBE!
