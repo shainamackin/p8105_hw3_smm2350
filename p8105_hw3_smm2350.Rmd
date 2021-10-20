@@ -13,8 +13,6 @@ To begin, I will load libraries and instacart data, and set theme options.
 library(tidyverse)
 library(p8105.datasets)
 library(lubridate)
-library(janitor)
-library(readxl)
 data("instacart")
 
 theme_set(theme_minimal() + theme(legend.position = "bottom"))
@@ -30,8 +28,7 @@ scale_fill_discrete = scale_fill_viridis_d
 
 ### Instacart data
 
-I will write a short description of the dataset,noting the size and structure of the data, 
-describing key variables, and giving illustrative examples of observations:
+I will write a short description of the dataset, noting the size and structure of the data, describing key variables, and giving illustrative examples of observations:
 
 The instacart dataset contains online grocery shopping data from 2017, with 
 `r nrow(instacart)` observations, or products from orders, and `r ncol(instacart)` 
@@ -279,7 +276,7 @@ daily_df = accel_df %>%
 knitr::kable(daily_df, caption = "Total Daily Activity")
 ```
 
-```{r, include=FALSE}
+```{r explore, include=FALSE}
 daily_wknd_df = accel_df %>%
   group_by(day_id, weekend_or_weekday, day) %>%
   summarize(activity = sum(count)) %>%
@@ -305,6 +302,7 @@ accel_df %>%
   ggplot(aes(x = minute, y = count, color = day)) +
   geom_point() +
   geom_line() +
+  scale_y_continuous(expand = c(0,0)) +
   labs(
     title = "24-hour accelerometer activity time courses by day",
     x = "minute",
@@ -313,4 +311,4 @@ accel_df %>%
    theme(legend.position = "right")
 ```
 
-Based on this graph, it appears the highest activity daily count was on a `Wednesday`, followed by a `Sunday`. 
+Based on this graph, it appears the highest activity count was on a `Wednesday`, followed by a `Sunday`. 
