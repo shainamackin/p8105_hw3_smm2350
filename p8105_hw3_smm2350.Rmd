@@ -297,9 +297,12 @@ No significant activity trends appear. The maximum daily activity was `r max(pul
 I will make a single-panel plot that shows the 24-hour activity time courses for each day and use color to indicate day of the week. 
 
 ```{r accel_24_plot}
-accel_df %>%
+accel_plot = accel_df %>%
+  mutate(minute = as.numeric(minute))
+
+accel_plot %>%
   group_by(day_id) %>%
-  ggplot(aes(x = as.numeric(minute), y = count, color = day)) +
+  ggplot(aes(x = minute, y = count, color = day)) +
   geom_point() +
   geom_line() +
   labs(
