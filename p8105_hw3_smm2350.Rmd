@@ -7,7 +7,7 @@ output: github_document
 
 # Homework 3
 
-To begin, I will load packages and instacart data, and set theme options.
+To begin, I will load libraries and instacart data, and set theme options.
 
 ```{r libraries, echo = FALSE, message = FALSE}
 library(tidyverse)
@@ -30,36 +30,47 @@ scale_fill_discrete = scale_fill_viridis_d
 
 ### Instacart data
 
-I will write a short description of the dataset,
-noting the size and structure of the data, 
-describing key variables, 
-and giving illustrative examples of observations:
+I will write a short description of the dataset,noting the size and structure of the data, 
+describing key variables, and giving illustrative examples of observations:
 
 The instacart dataset contains online grocery shopping data from 2017, with 
 `r nrow(instacart)` observations, or products from orders, and `r ncol(instacart)` 
 variables, for a total of `r (nrow(instacart)*ncol(instacart))` data points. 
 Key variables include `order_id`, `product_id`, `user_id`, whether items were 
 `reordered`, `order_hour_of_day` and `days_since_prior_order` (ranging from 
-`r min(pull(instacart, days_since_prior_order))` to `r max(pull(instacart, 
-days_since_prior_order))` ), as well as `product_name` and associated `aisle` 
+`r min(pull(instacart, days_since_prior_order))` to `r max(pull(instacart, days_since_prior_order))`) as well as `product_name` and associated `aisle` 
 and `department`.
 
-Initial analysis shows `produce` to be the most frequently ordered-from department, 
-as visualized below: 
+Initial analysis shows `produce` to be the most frequently ordered-from department, as visualized below: 
 
 ```{r exploration}
 instacart %>%
   count(department) %>%
   arrange(desc(n)) %>%
   ggplot(aes(forcats::fct_reorder(department, (n)), n)) +
-  geom_col() +
+  geom_col(fill="darkblue") +
   coord_flip() +
   labs(
-    title = "Departments in decreasing order of popularity",
-    x = "Department name",
-    y = "Number of items ordered",
+    title = "Departments in Decreasing Order of Popularity",
+    x = "Department Name",
+    y = "Number of Items Ordered",
   )
 ```
+
+Let's also investigate the busiest hour of the day for orders, on average. 
+
+```{r more_exploration}
+instacart %>%
+  ggplot(aes(x = order_hour_of_day)) +
+  geom_histogram(binwidth = .5, fill = "darkblue") +
+  labs(
+    title = "Order Volume Over 24-Hour Day",
+    x = "Hour of Day",
+    y = "Order Count"
+  )
+```
+
+Hour 14, or 2pm, has the highest volume of orders placed, on average.
 
 #### Let's explore how many aisles are there, and which are most ordered from.
 
@@ -67,21 +78,19 @@ instacart %>%
 instacart %>%
   group_by(aisle_id, aisle) %>%
   summarize(n_obs = n()) %>%
-  arrange(desc(n_obs)) 
+  arrange(desc(n_obs))
 ```
 
-There are 134 aisles. The aisles with the most ordered-from items are 
-`fresh vegetables` and `fresh fruits`, followed by `packaged vegetables fruits`. 
+There are `r max(pull(instacart, aisle_id))` aisles. The aisles that are most ordered from are `fresh vegetables` and `fresh fruits`, followed by `packaged vegetables fruits`. 
 
-#### To illustrate this, I will make a plot that shows the number of items 
-#### ordered in each aisle, limiting to aisles with more than 10000 items ordered.
+#### To illustrate this, I will make a plot that shows the number of items ordered in each aisle, limiting to aisles with more than 10000 items ordered.
 
 ```{r aisles_plot}
 instacart %>%
   count(aisle) %>%
   filter(n > 10000) %>%
   ggplot(aes(forcats::fct_reorder(aisle, (n)), n)) +
-  geom_col() +
+  geom_col(fill = "darkblue") +
   coord_flip() +
   labs(
     title = "Number of items ordered per aisle",
@@ -94,8 +103,7 @@ instacart %>%
 This again shows that the aisles most ordered from are `fresh vegetables` 
 and `fresh fruits`, followed by `packaged vegetables fruits`.
 
-#### I will make a table showing the three most popular items in the 
-`baking ingredients`, `dog food care`, and `packaged vegetables fruits` aisles. 
+#### I will make a table showing the three most popular items in the `baking ingredients`, `dog food care`, and `packaged vegetables fruits` aisles. 
 
 ```{r aisles_table}
 instacart %>%
@@ -112,17 +120,11 @@ instacart %>%
 ```
 
 We see that `organic baby spinach`, `organic raspberries`, and `organic blueberries` 
-are the top three ordered items from the `packaged vegetables fruits` aisle; 
-`light brown sugar`, `pure baking soda`, and `cane sugar` are the top three ordered 
-items from the `baking ingredients` aisle; 
-and `snack sticks chicken & rice recipe dog treats`, 
-`organix chicken & brown rice recipe`, and `small dog biscuits` are the top three
-ordered items from the `dog food care` aisle, respectively.
+are the top three ordered items from the `packaged vegetables fruits` aisle; `light brown sugar`, `pure baking soda`, and `cane sugar` are the top three ordered items from the `baking ingredients` aisle; and `snack sticks chicken & rice recipe dog treats`, `organix chicken & brown rice recipe`, and `small dog biscuits` are the top three ordered items from the `dog food care` aisle, respectively.
 
-#### I will make a 2x7 table showing the mean hour of the day at which 
-#### Pink Lady Apples and Coffee Ice Cream are ordered on each day of the week. 
+#### I will make a 2x7 table showing the mean hour of the day at which Pink Lady Apples and Coffee Ice Cream are ordered on each day of the week. 
 
-```{r apples_ice_table}
+```{r apples_ice_table, message=FALSE}
 instacart %>%
   mutate(t_day_number = order_dow +1) %>%
   mutate(day_of_week = wday(t_day_number, label = TRUE)) %>%
@@ -142,9 +144,7 @@ instacart %>%
 
 ### BRFSS data
 
-I will clean the data, formatting to use appropriate variable names, 
-focusing on the `Overall Health` topic, and only including factored responses 
-ordered from `Excellent` to `Poor`.
+I will clean the data, formatting to use appropriate variable names, focusing on the `Overall Health` topic, and only including factored responses ordered from `Excellent` to `Poor`.
 
 ```{r brfss_tidy}
 data("brfss_smart2010")
@@ -185,10 +185,7 @@ In 2002, `CT`, `FL`, `MA`, `NJ`, `NC`, and `PA` were observed at 7 or more locat
 In 2010, `CA`, `CO`, `FL`, `MD`, `MA`, `NE`, `NJ`, `NY`, `NC`, `OH`, `PA`, 
 `SC`, `TX`, and `WA` were observed at 7 or more locations.  
 
-#### I will construct a dataset that is limited to Excellent responses, 
-#### and contains, year, state, and a variable that averages the data_value across 
-#### locations within a state. I will also make a “spaghetti” plot of this 
-#### average value over time within a state.
+#### I will construct a dataset that is limited to Excellent responses, and contains, year, state, and a variable that averages the data_value across locations within a state. I will also make a “spaghetti” plot of this average value over time within a state.
 
 ```{r brfss_excellent}
 df_excellent = brfss_tidy %>%
@@ -215,9 +212,8 @@ df_excellent %>%
 
 The state with the lowest average data value over the years is `WY`.
 
-#### I will make a two-panel plot showing, for the years 2006, and 2010, 
-#### distribution of data_value for responses (“Poor” to “Excellent”) 
-#### among locations in NY State.
+
+#### I will make a two-panel plot showing, for the years 2006, and 2010, distribution of data_value for responses (“Poor” to “Excellent”) among locations in NY State.
 
 ```{r brfss_excellent_plot}
 brfss_tidy %>%
