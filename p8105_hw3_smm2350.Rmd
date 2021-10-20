@@ -299,10 +299,9 @@ I will make a single-panel plot that shows the 24-hour activity time courses for
 ```{r accel_24_plot}
 accel_df %>%
   group_by(day_id) %>%
-  ggplot(aes(x = minute, y = count, color = day)) +
+  ggplot(aes(x = as.numeric(minute), y = count, color = day)) +
   geom_point() +
   geom_line() +
-  scale_y_continuous(expand = c(0,0)) +
   labs(
     title = "24-hour accelerometer activity time courses by day",
     x = "minute",
