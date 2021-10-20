@@ -68,7 +68,7 @@ instacart %>%
 
 Hour 14, or 2pm, has the highest volume of orders placed, on average.
 
-#### Let's explore how many aisles are there, and which are most ordered from.
+#### Let's explore how many aisles there are, and which are most ordered from.
 
 ```{r aisles_count}
 instacart %>%
