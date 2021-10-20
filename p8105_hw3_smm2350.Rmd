@@ -41,28 +41,27 @@ Key variables include `order_id`, `product_id`, `user_id`, whether items were
 `r min(pull(instacart, days_since_prior_order))` to `r max(pull(instacart, days_since_prior_order))`) as well as `product_name` and associated `aisle` 
 and `department`.
 
-Initial analysis shows `produce` to be the most frequently ordered-from department, as visualized below: 
+Initial exploratory analysis shows `produce` to be the most frequently ordered-from department, as visualized below: 
 
 ```{r exploration}
 instacart %>%
   count(department) %>%
   arrange(desc(n)) %>%
   ggplot(aes(forcats::fct_reorder(department, (n)), n)) +
-  geom_col(fill="darkblue") +
+  geom_col(fill="#440154FF") +
   coord_flip() +
   labs(
     title = "Departments in Decreasing Order of Popularity",
     x = "Department Name",
-    y = "Number of Items Ordered",
-  )
+    y = "Number of Items Ordered")
 ```
 
-Let's also investigate the busiest hour of the day for orders, on average. 
+Further exploratory analysis let's us investigate the busiest hour of the day for orders, on average. 
 
 ```{r more_exploration}
 instacart %>%
   ggplot(aes(x = order_hour_of_day)) +
-  geom_histogram(binwidth = .5, fill = "darkblue") +
+  geom_histogram(binwidth = .5, fill = "#39568CFF") +
   labs(
     title = "Order Volume Over 24-Hour Day",
     x = "Hour of Day",
@@ -90,7 +89,7 @@ instacart %>%
   count(aisle) %>%
   filter(n > 10000) %>%
   ggplot(aes(forcats::fct_reorder(aisle, (n)), n)) +
-  geom_col(fill = "darkblue") +
+  geom_col(fill = "#1F968BFF") +
   coord_flip() +
   labs(
     title = "Number of items ordered per aisle",
@@ -100,8 +99,7 @@ instacart %>%
   )
 ```
 
-This again shows that the aisles most ordered from are `fresh vegetables` 
-and `fresh fruits`, followed by `packaged vegetables fruits`.
+This again shows that the aisles most ordered from are `fresh vegetables` and `fresh fruits`, followed by `packaged vegetables fruits`.
 
 #### I will make a table showing the three most popular items in the `baking ingredients`, `dog food care`, and `packaged vegetables fruits` aisles. 
 
@@ -162,7 +160,8 @@ brfss_tidy = brfss_smart2010 %>%
 #### Let's determine which states were observed at 7+ locations in 2002 and 2010.
 
 ```{r brfss_locations}
-brfss_tidy %>%
+brfss_2002 = 
+  brfss_tidy %>%
   select(year, locationabbr, locationdesc) %>%
   filter(year == 2002) %>%
   distinct() %>%
@@ -171,7 +170,8 @@ brfss_tidy %>%
   select(locationabbr) %>%
   distinct()
 
-brfss_tidy %>%
+brfss_2010 = 
+  brfss_tidy %>%
   select(year, locationabbr, locationdesc) %>%
   filter(year == 2010) %>%
   distinct() %>%
@@ -181,9 +181,8 @@ brfss_tidy %>%
   distinct() 
 ```
 
-In 2002, `CT`, `FL`, `MA`, `NJ`, `NC`, and `PA` were observed at 7 or more locations. 
-In 2010, `CA`, `CO`, `FL`, `MD`, `MA`, `NE`, `NJ`, `NY`, `NC`, `OH`, `PA`, 
-`SC`, `TX`, and `WA` were observed at 7 or more locations.  
+In 2002, `r pull(brfss_2002, locationabbr)` were observed at 7 or more locations. 
+In 2010, `r pull(brfss_2010, locationabbr)` were observed at 7 or more locations.  
 
 #### I will construct a dataset that is limited to Excellent responses, and contains, year, state, and a variable that averages the data_value across locations within a state. I will also make a “spaghetti” plot of this average value over time within a state.
 
@@ -210,8 +209,7 @@ df_excellent %>%
   theme(legend.position = "right")
 ```
 
-The state with the lowest average data value over the years is `WY`.
-
+Among `excellent` responses, the lowest average state data value over the years was `WV` at `r min(pull(df_excellent, avg_data_value))` while the highest was `UT` at `r max(pull(df_excellent, avg_data_value))`.
 
 #### I will make a two-panel plot showing, for the years 2006, and 2010, distribution of data_value for responses (“Poor” to “Excellent”) among locations in NY State.
 
@@ -235,8 +233,7 @@ brfss_tidy %>%
    guides(col=guide_legend("Location"))
 ```
 
-For both `2006` and `2010`, the highest `data_value` among all NY locations 
-was associated with a `Good` `response`. 
+For both `2006` and `2010`, the highest `data_value` among all NY locations was associated with a `Good` `response`. 
 
 ## Problem 3
 
@@ -244,7 +241,7 @@ was associated with a `Good` `response`.
 
 First, I will load and tidy the accelerometer data.
 
-```{r accel_import}
+```{r accel_import, message = FALSE}
 accel_df = read_csv("accel_data.csv") %>%
   janitor::clean_names() %>%
   mutate(
@@ -263,11 +260,7 @@ accel_df = read_csv("accel_data.csv") %>%
     values_to = "count")
 ```
 
-The tidied `accel_df` contains `r nrow(accel_df)` rows (or observations), 
-one for every `minute` of every `day` from the `r max(pull(accel_df, week))` `week` 
-period of accelerometer data collection. 
-The dataset's `r ncol(accel_df)` variables include the following: 
-`r colnames(accel_df)`.
+The tidied `accel_df` contains `r nrow(accel_df)` rows (or observations), one for every `minute` of every `day` from the `r max(pull(accel_df, week))` `week` period of accelerometer data collection. The dataset's `r ncol(accel_df)` variables include the following: `r colnames(accel_df)`.
 
 #### Daily activity
 
@@ -286,18 +279,31 @@ daily_df = accel_df %>%
 knitr::kable(daily_df, caption = "Total Daily Activity")
 ```
 
-TRENDS? 
+```{r, include=FALSE}
+daily_wknd_df = accel_df %>%
+  group_by(day_id, weekend_or_weekday, day) %>%
+  summarize(activity = sum(count)) %>%
+  mutate(day_id = paste("day", day_id)) 
+
+knitr::kable(daily_wknd_df)
+
+daily_wknd_df %>%
+  ggplot(aes(x = day_id, y = activity)) +
+  geom_point()
+
+```
+
+No significant activity trends appear. The maximum daily activity was `r max(pull(daily_df))`. The minimum daily activity was `r min(pull(daily_df))`.
 
 #### 24-hour plot
 
-I will make a single-panel plot that shows the 24-hour activity time courses for 
-each day and use color to indicate day of the week. 
+I will make a single-panel plot that shows the 24-hour activity time courses for each day and use color to indicate day of the week. 
 
-```{r accel_24_plot, message=FALSE}
-panel_df = accel_df %>%
-  mutate(week = paste("week", week)) %>%
+```{r accel_24_plot}
+accel_df %>%
+  group_by(day_id) %>%
   ggplot(aes(x = minute, y = count, color = day)) +
-  geom_point(size = .5) +
+  geom_point() +
   geom_line() +
   labs(
     title = "24-hour accelerometer activity time courses by day",
@@ -307,4 +313,4 @@ panel_df = accel_df %>%
    theme(legend.position = "right")
 ```
 
-DESCRIBE!
+Based on this graph, it appears the highest activity daily count was on a `Wednesday`, followed by a `Sunday`. 
